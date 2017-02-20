@@ -4,8 +4,6 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"path/filepath"
-	"runtime"
 	"time"
 )
 
@@ -13,6 +11,7 @@ import (
 // saves log data in a new log file
 type FileLogSave struct {
 	LogFileName string
+	LogFileDir  string
 }
 
 // SaveLogData in FileLogSave will save any logged
@@ -25,7 +24,7 @@ func (logSave FileLogSave) SaveLogData(data string) {
 }
 
 func (logSave FileLogSave) getLogFile(file string) *os.File {
-	directory := logSave.defaultDirectory()
+	directory := logSave.LogFileDir
 	filename := logSave.defaultFile()
 	fullPath := directory + filename
 	logfile, err := os.OpenFile(fullPath, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0640)
@@ -33,12 +32,6 @@ func (logSave FileLogSave) getLogFile(file string) *os.File {
 		fmt.Printf("File Save Error: %v", err.Error())
 	}
 	return logfile
-}
-
-func (logSave FileLogSave) defaultDirectory() string {
-	_, base, _, _ := runtime.Caller(0)
-	projectPath := filepath.Dir(base) + "/logs/"
-	return projectPath
 }
 
 func (logSave FileLogSave) defaultFile() string {
